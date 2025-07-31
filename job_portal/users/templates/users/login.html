@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; height: 80vh; background-color: white;">
+    <div style="width: 100%; max-width: 360px; padding: 1.5rem; background-color: white; border: 1px solid #ddd; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+        <h2 style="text-align: center; color: #004080; margin-bottom: 1.5rem;">Login</h2>
+        <form method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            {% csrf_token %}
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <label for="id_username" style="font-size: 1rem; font-weight: bold; color: #004080;">Username</label>
+                <input type="text" name="username" id="id_username" style="padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; box-sizing: border-box; width: 100%; transition: border-color 0.3s ease;" required>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <label for="id_password" style="font-size: 1rem; font-weight: bold; color: #004080;">Password</label>
+                <input type="password" name="password" id="id_password" style="padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; box-sizing: border-box; width: 100%; transition: border-color 0.3s ease;" required>
+            </div>
+            <button type="submit" style="background-color: #004080; color: white; border: none; padding: 0.8rem; border-radius: 5px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: background-color 0.3s ease;">
+                Login
+            </button>
+        </form>
+        <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #555;">
+            Don't have an account? 
+            <a href="{% url 'employer_register' %}" style="color: #004080; text-decoration: none;">Register as Employer</a> or 
+            <a href="{% url 'applicant_register' %}" style="color: #004080; text-decoration: none;">Register as Applicant</a>.
+        </p>
+    </div>
+</div>
+{% endblock %}

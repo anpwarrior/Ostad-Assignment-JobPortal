@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Employer Dashboard{% endblock %}
+
+{% block content %}
+<!-- Post New Job Button -->
+<div style="text-align: right; margin-bottom: 1.5rem;">
+    <a href="{% url 'post_job' %}" style="background-color: #004080; color: white; text-decoration: none; padding: 0.8rem 1.5rem; border-radius: 5px; font-size: 1rem; font-weight: bold; display: inline-block; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); cursor: pointer; transition: background-color 0.3s ease;">
+        + Post New Job
+    </a>
+</div>
+
+<!-- Jobs Table -->
+<h2>Your Posted Jobs</h2>
+<table border="1" style="width: 100%; text-align: left; border-collapse: collapse; margin-bottom: 2rem;">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Company</th>
+            <th>Location</th>
+            <th>Posted On</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for job in jobs %}
+        <tr>
+            <td>{{ job.title }}</td>
+            <td>{{ job.company_name }}</td>
+            <td>{{ job.location }}</td>
+            <td>{{ job.created_at|date:"M d, Y" }}</td>
+            <td>
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="{% url 'edit_job' job.id %}" style="background-color: #28a745; color: white; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 5px; font-size: 0.9rem; display: inline-block; text-align: center; cursor: pointer;">Edit</a>
+                    <a href="{% url 'delete_job' job.id %}" style="background-color: #dc3545; color: white; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 5px; font-size: 0.9rem; display: inline-block; text-align: center; cursor: pointer;" onclick="return confirm('Are you sure you want to delete this job?');">Delete</a>
+                    <button onclick="toggleApplicants('{{ job.id }}')" style="background-color: #ffc107; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 5px; font-size: 0.9rem; cursor: pointer;">View Applicants</button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <!-- Collapsible Applicants Section -->
+            <td colspan="5">
+                <div id="applicants-{{ job.id }}" style="display: none; margin-top: 1rem; padding: 1rem; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                    <h3 style="color: #004080; margin-bottom: 1rem;">Applicants for {{ job.title }}:</h3>
+                    {% if job.applications.all %}
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            {% for application in job.applications.all %}
+                                <li style="margin-bottom: 1rem; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px; background-color: #ffffff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                                    <strong style="color: #004080;">{{ application.applicant.username }}</strong>
+                                    <span style="display: block; color: #555; font-size: 0.9rem;">Applied on {{ application.applied_at|date:"M d, Y" }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p style="color: #555; font-size: 0.9rem;">No applicants yet.</p>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">You haven't posted any jobs yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    /**
+     * Toggles the visibility of the applicant list for a specific job.
+     * @param {int} jobId - The ID of the job whose applicants should be shown/hidden.
+     */
+    function toggleApplicants(jobId) {
+        var element = document.getElementById('applicants-' + jobId);
+        if (element.style.display === 'none') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+{% endblock %}

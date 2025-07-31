@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Register as {{ role }}{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; height: 80vh; background-color: white;">
+    <div style="width: 100%; max-width: 400px; padding: 2rem; background-color: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <h2 style="text-align: center; color: #004080; margin-bottom: 1.5rem;">Register as {{ role }}</h2>
+        <form method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            {% csrf_token %}
+            {% for field in form %}
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <label for="{{ field.id_for_label }}" style="font-size: 1rem; font-weight: bold; color: #004080;">{{ field.label }}</label>
+                <input 
+                    type="{{ field.field.widget.input_type }}" 
+                    name="{{ field.html_name }}" 
+                    id="{{ field.id_for_label }}" 
+                    value="{{ field.value|default_if_none:'' }}" 
+                    style="padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; box-sizing: border-box; width: 100%; transition: border-color 0.3s ease;" 
+                    {% if field.field.widget.attrs.required %}required{% endif %}
+                >
+                {% if field.errors %}
+                <span style="color: #dc3545; font-size: 0.9rem;">{{ field.errors|join:", " }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" style="background-color: #004080; color: white; border: none; padding: 0.8rem; border-radius: 5px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: background-color 0.3s ease;">
+                Register
+            </button>
+        </form>
+        <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #555;">
+            Already have an account? 
+            <a href="{% url 'login' %}" style="color: #004080; text-decoration: none;">Login here</a>.
+        </p>
+    </div>
+</div>
+{% endblock %}
