@@ -130,3 +130,21 @@ def cancel_application(request, application_id):
     
     # Redirect back to the Applicant Dashboard
     return redirect('applicant_dashboard')
+
+@login_required
+def update_application_status(request, application_id):
+    if request.method == 'POST':
+        # Get the application object
+        application = get_object_or_404(Application, id=application_id)
+
+        # Get the status from the POST data
+        status = request.POST.get('status')
+        if status in ['accepted', 'rejected']:
+            application.status = status
+            application.save()
+            messages.success(request, f"Application from {application.applicant.username} has been {status}.")
+        else:
+            messages.error(request, "Invalid status.")
+
+    # Redirect back to the employer dashboard
+    return redirect('employer_dashboard')

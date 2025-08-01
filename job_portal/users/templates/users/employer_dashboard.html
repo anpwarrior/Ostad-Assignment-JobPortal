@@ -40,19 +40,44 @@
         <tr>
             <!-- Collapsible Applicants Section -->
             <td colspan="5">
-                <div id="applicants-{{ job.id }}" style="display: none; margin-top: 1rem; padding: 1rem; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
-                    <h3 style="color: #004080; margin-bottom: 1rem;">Applicants for {{ job.title }}:</h3>
+                <div id="applicants-{{ job.id }}" style="display: none; margin-top: 1rem; padding: 1.5rem; background-color: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <h3 style="color: #004080; margin-bottom: 1rem; font-size: 1.5rem; font-weight: bold;">Applicants for {{ job.title }}</h3>
                     {% if job.applications.all %}
                         <ul style="list-style: none; padding: 0; margin: 0;">
                             {% for application in job.applications.all %}
-                                <li style="margin-bottom: 1rem; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px; background-color: #ffffff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
-                                    <strong style="color: #004080;">{{ application.applicant.username }}</strong>
-                                    <span style="display: block; color: #555; font-size: 0.9rem;">Applied on {{ application.applied_at|date:"M d, Y" }}</span>
-                                </li>
+                            <li style="margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <strong style="color: #004080; font-size: 1.2rem;">{{ application.applicant.username }}</strong>
+                                    <span style="display: block; color: #555; font-size: 0.9rem; margin-top: 0.3rem;">Applied on {{ application.applied_at|date:"M d, Y" }}</span>
+                                    <span style="display: block; margin-top: 0.5rem; font-size: 0.9rem;">
+                                        {% if application.status == 'pending' %}
+                                            <span style="color: #ffc107; font-weight: bold;">Pending</span>
+                                        {% elif application.status == 'accepted' %}
+                                            <span style="color: #28a745; font-weight: bold;">Accepted</span>
+                                        {% elif application.status == 'rejected' %}
+                                            <span style="color: #dc3545; font-weight: bold;">Rejected</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                {% if application.status == 'pending' %}
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <form method="POST" action="{% url 'update_application_status' application.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="accepted">
+                                        <button type="submit" style="padding: 0.5rem 1rem; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem;">Accept</button>
+                                    </form>
+                                    <form method="POST" action="{% url 'update_application_status' application.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="rejected">
+                                        <button type="submit" style="padding: 0.5rem 1rem; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem;">Reject</button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </li>
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <p style="color: #555; font-size: 0.9rem;">No applicants yet.</p>
+                        <p style="color: #555; font-size: 1rem; text-align: center;">No applicants yet.</p>
                     {% endif %}
                 </div>
             </td>
